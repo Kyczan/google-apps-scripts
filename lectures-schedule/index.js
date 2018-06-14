@@ -4,6 +4,8 @@
  */
 
 function main() {
+
+  setConfig();
   
   var lectures = getLectures();
   createFileName(lectures);
