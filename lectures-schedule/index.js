@@ -1,14 +1,23 @@
 /*
- * Script runs every day, reads data from calendar,
- * writes it to doc and puts into Drive
+ * Script runs every day, reads data from external service,
+ * writes it to calendar and into doc and puts doc into Drive
  */
 
-function main() {
+function app() {
 
   setConfig();
   
-  var lectures = getLectures();
-  createFileName(lectures);
-  var actualFileId = createFile(lectures);
-  moveFile(actualFileId);
+  var data = getDataFromService();
+  
+  var lectures = filterDataPeriod(data);
+  if (lectures.length) {
+    createFileName(lectures);
+    var actualFileId = createFile(lectures);
+    moveFile(actualFileId);
+  }
+  
+  var changedLectures = filterDataChanged(data);
+  if (changedLectures.length) {
+    modifyCalendar(changedLectures);
+  }
 }

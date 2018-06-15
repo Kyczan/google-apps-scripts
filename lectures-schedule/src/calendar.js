@@ -1,39 +1,26 @@
-var getSpeaker = function(txt) {
+var modifyCalendar = function(data) {
 
-  var ind = txt.indexOf(' nr');
-  if (ind > -1) {
-    return txt.substr(0,ind);
-  }
-  return txt;
-}
-
-var getLectureTitle = function(txt) {
-
-  var re = /(\d+. )?(\[Z\])?(.*)/i;
-  var found = txt.match(re);
-  return found[3];
-}
-
-var getLectureDate = function(date) {
-  
-  return date.toJSON().substr(0,10);
-}
-
-var getLectures = function() {
-
-  var data = [];
-  var now = new Date();
-  var future = new Date(now.getTime() + (config.daysPeriod * 24 * 60 * 60 * 1000));
   var calendar = CalendarApp.getCalendarById(config.calendarId);
-  var events = calendar.getEvents(now, future);
   
-  for (var i = 0; i < events.length; i++) {
-    var obj = {};
-    obj.speaker = getSpeaker(events[i].getTitle());
-    obj.title = getLectureTitle(events[i].getDescription());
-    obj.date = getLectureDate(events[i].getEndTime());
+  for (var i = 0; i < data.length; i++) {
+    var eventDate = new Date(data[i].event_date+'T00:00:00');
+    var events = calendar.getEventsForDay(eventDate);
+    if (events.length) {
+      events[0].deleteEvent();
+    }
     
-    data.push(obj);
+    var speaker = (data[i].speaker ? data[i].speaker : data[i].lecture);
+    if (speaker) {
+      var eventTitle = (data[i].lecture_nr ? speaker+' nr '+data[i].lecture_nr : speaker)
+      var eventStart = new Date(data[i].event_date+'T'+data[i].event_time+':00');
+      var eventEnd = new Date(eventStart.getTime() + (30 * 60 * 1000));
+      var eventDesc = (data[i].lecture_nr ? data[i].lecture_nr+'. '+data[i].lecture : data[i].lecture);
+      var event = calendar.createEvent(
+        eventTitle,
+        eventStart,
+        eventEnd,
+        { description: eventDesc }
+      );
+    }
   }
-  return data;
 }

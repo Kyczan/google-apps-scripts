@@ -1,5 +1,5 @@
 var config = {
-  daysPeriod:         60
+  daysPeriod: 60
 };
 
 var scriptProperties = PropertiesService.getScriptProperties();
@@ -10,4 +10,6 @@ var setConfig = function () {
   config.docTitle = scriptProperties.getProperty('DOC_TITLE');
   config.fileName = scriptProperties.getProperty('FILE_NAME');
   config.driveTargetFolder = scriptProperties.getProperty('DRIVE_TARGET_FOLDER');
+  config.authorization = scriptProperties.getProperty('AUTHORIZATION');
+  config.fetchUrl = scriptProperties.getProperty('FETCH_URL');
 }

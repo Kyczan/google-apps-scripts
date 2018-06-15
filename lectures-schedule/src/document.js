@@ -3,8 +3,8 @@ var createFileName = function(lectures) {
   var len = lectures.length;
   if (!len) return;
   
-  var first = lectures[0].date.substr(5,2);
-  var last = lectures[len-1].date.substr(5,2);
+  var first = lectures[0].event_date.substr(5,2);
+  var last = lectures[len-1].event_date.substr(5,2);
 
   if (first == last) {
     config.fileName = first+'. '+config.fileName;
@@ -55,7 +55,7 @@ var createFile = function(lectures) {
     styleDate[DocumentApp.Attribute.ITALIC] = false;
     
     var cellDate = row.appendTableCell();
-    cellDate.setText(lectures[i].date);
+    cellDate.setText(lectures[i].event_date);
     cellDate.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
     cellDate.setWidth(widthSplit.col1);
     var parDate = cellDate.getChild(0).asParagraph();    
@@ -70,26 +70,35 @@ var createFile = function(lectures) {
     styleTitle[DocumentApp.Attribute.ITALIC] = true;
     
     var cellTitle = row.appendTableCell();
-    cellTitle.setText(lectures[i].title);
+    cellTitle.setText(lectures[i].lecture);
     cellTitle.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
     cellTitle.setWidth(widthSplit.col2);
     var parTitle = cellTitle.getChild(0).asParagraph();    
     parTitle.setAttributes(styleTitle);
 
-    // speker cell:
+    // speker and congregation cell:
     var styleSpeaker = {};
     styleSpeaker[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.RIGHT;
-    styleSpeaker[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
-    styleSpeaker[DocumentApp.Attribute.FONT_SIZE] = 12;
+    styleSpeaker[DocumentApp.Attribute.FONT_FAMILY] = 'Times New Roman';
+    styleSpeaker[DocumentApp.Attribute.FONT_SIZE] = 13;
     styleSpeaker[DocumentApp.Attribute.BOLD] = false;
     styleSpeaker[DocumentApp.Attribute.ITALIC] = false;
     
+    var styleCongregation = {};
+    styleCongregation[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.RIGHT;
+    styleCongregation[DocumentApp.Attribute.FONT_FAMILY] = 'Arial';
+    styleCongregation[DocumentApp.Attribute.FONT_SIZE] = 10;
+    styleCongregation[DocumentApp.Attribute.BOLD] = false;
+    styleCongregation[DocumentApp.Attribute.ITALIC] = false;
+ 
     var cellSpeaker = row.appendTableCell();
-    cellSpeaker.setText(lectures[i].speaker);
+    cellSpeaker.setText(lectures[i].speaker+'\n'+lectures[i].congregation);
     cellSpeaker.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
     cellSpeaker.setWidth(widthSplit.col3);
     var parSpeaker = cellSpeaker.getChild(0).asParagraph();
     parSpeaker.setAttributes(styleSpeaker);
+    var parCongregation = cellSpeaker.getChild(1).asParagraph();
+    parCongregation.setAttributes(styleCongregation);
   }
   doc.saveAndClose();
   return doc.getId();
