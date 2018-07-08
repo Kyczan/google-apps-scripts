@@ -1,17 +1,29 @@
 var getDataFromService = function () {
+
+  var conn = Jdbc.getConnection(config.dbUrl, config.user, config.userPwd);
+  var stmt = conn.createStatement();
+  var results = stmt.executeQuery(config.sql);
+  var meta = results.getMetaData();
+  var numCols = meta.getColumnCount();
   
-  var options = {
-    method : 'post',
-    contentType: 'application/json',
-    payload : JSON.stringify({
-      request: 'schedule'
-    }),
-    headers: {
-      authorization: config.authorization
+  var colNames = [];
+  for (var col = 0; col < numCols; col++) {
+    colNames.push(meta.getColumnLabel(col + 1));
+  }
+  
+  var data = [];
+  while (results.next()) {
+    var row = {};
+    for (var col = 0; col < numCols; col++) {
+      row[colNames[col]] = results.getString(col + 1);
     }
-  };
-  var response = UrlFetchApp.fetch(config.fetchUrl, options);
-  return JSON.parse(response);
+    data.push(row);
+  }
+  
+  results.close();
+  stmt.close();
+  Logger.log(data)
+  return data;
 };
 
 var sortRepairData = function (data) {
