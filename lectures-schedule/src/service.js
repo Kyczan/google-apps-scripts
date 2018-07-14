@@ -22,7 +22,6 @@ var getDataFromService = function () {
   
   results.close();
   stmt.close();
-  Logger.log(data)
   return data;
 };
 
@@ -61,7 +60,7 @@ var sortRepairData = function (data) {
   
   function mappingFn (v) {
     if (v.lecture === null) v.lecture = '';
-    v.lecture_nr = extractLectureNumber(v.lecture);
+    v.lecture_nr = v.lecture_nr || extractLectureNumber(v.lecture);
     if (v.lecture) v.lecture = extractTitle(v.lecture);
     if (v.speaker === null) v.speaker = '';
     if (v.speaker) v.speaker = invertName(v.speaker);
@@ -89,7 +88,7 @@ var filterDataPeriod = function (data) {
 
 var filterDataChanged = function (data) {
 
-  var today = (new Date()).toJSON().substr(0,10);
+  var today = (new Date('2018-07-11')).toJSON().substr(0,10);
   function filterCriteria(obj) {
     return obj.modify_date >= today && obj.deleted == 'F';
   }
