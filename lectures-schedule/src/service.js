@@ -88,7 +88,7 @@ var filterDataPeriod = function (data) {
 
 var filterDataChanged = function (data) {
 
-  var today = (new Date('2018-07-11')).toJSON().substr(0,10);
+  var today = (new Date()).toJSON().substr(0,10);
   function filterCriteria(obj) {
     return obj.modify_date >= today && obj.deleted == 'F';
   }
