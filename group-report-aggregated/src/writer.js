@@ -18,12 +18,14 @@ var writeData = function(robustData) {
   for (var i = 0; i < data.length; i++) {
     // name
     var range = sheet.getRange(offset + 1, 1);
+    range.setNumberFormat("@");
     range.setValue(data[i].name);
     range.setFontWeight('bold');
     range.setFontSize(18);
 
     // heading
     range = sheet.getRange(offset + 2, 1, 1, 7);
+    range.setNumberFormat("@");
     range.setValues([heading]);
     range.setBackground('#bae1ff');
     range.setBorder(true, true, true, true, true, false);
@@ -32,6 +34,7 @@ var writeData = function(robustData) {
 
     // data
     range = sheet.getRange(offset + 3, 1, data[i].data.length, 7);
+    range.setNumberFormat("####.##");
     range.setValues(data[i].data);
     range.setBorder(true, true, true, true, true, true);
     range.setHorizontalAlignment('center');
