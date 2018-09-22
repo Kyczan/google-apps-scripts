@@ -30,7 +30,31 @@ var writeData = function (robustData) {
     range.setBorder(true, true, true, true, true, true);
     range.setHorizontalAlignment("center");
     
-    offset = offset + data[i].data.length + 4;
+    // sum
+    offset = offset + data[i].data.length;
+    range = sheet.getRange(offset + 3, 2, 1, 5);
+    var sumOfRows = "=SUM(R[-" + data[i].data.length + "]C[0]:R[-1]C[0])";
+    range.setFormulaR1C1(sumOfRows);
+    range.setNumberFormat("0");
+    
+    // avg
+    range = sheet.getRange(offset + 4, 2, 1, 5);
+    var averageOfRows = "=R[-1]C[0]/" + data[i].data.length;
+    range.setFormulaR1C1(averageOfRows);
+    range.setNumberFormat("0.00");
+    
+    range = sheet.getRange(offset + 3, 1, 1, 1);
+    range.setValue("SUMA");
+    range = sheet.getRange(offset + 4, 1, 1, 1);
+    range.setValue("ŚREDNIA");
+    
+    range = sheet.getRange(offset + 3, 1, 2, 6);
+    range.setBackground('#bae1ff');
+    range.setBorder(true, true, true, true, true, true);
+    range.setFontWeight("bold");
+    range.setHorizontalAlignment("center");
+    
+    offset = offset + 5;
   }
   sheet.setColumnWidths(2, 5, 80);
   sheet.autoResizeColumns(7,1);
