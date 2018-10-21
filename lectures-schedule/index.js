@@ -12,8 +12,8 @@ function app() {
   var lectures = filterDataPeriod(data);
   if (lectures.length) {
     createFileName(lectures);
-    var actualFileId = createFile(lectures);
-    moveFile(actualFileId);
+    var doc = getActualFile();
+    writeFile(lectures, doc);
   }
   
   var changedLectures = filterDataChanged(data);

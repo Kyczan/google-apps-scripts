@@ -13,7 +13,42 @@ var createFileName = function(lectures) {
   config.fileName = first+'-'+last+'. '+config.fileName;
 }
 
-var createFile = function(lectures) {
+var moveFile = function(actualFileId) {
+  
+  var destFolder = DriveApp.getFoldersByName(config.driveTargetFolder).next();
+  var sourceFolder = DriveApp.getRootFolder();
+  var actualFile = DriveApp.getFileById(actualFileId);
+  destFolder.addFile(actualFile);
+  sourceFolder.removeFile(actualFile);
+}
+
+var createFile = function() {
+  
+  var doc = DocumentApp.create(config.fileName);
+  var fileId = doc.getId();
+  scriptProperties.setProperty('FILE_ID', fileId);
+  moveFile(fileId);
+  return doc;
+}
+
+var getActualFile = function() {
+
+  var file
+  var fileId = scriptProperties.getProperty('FILE_ID') || null; 
+  
+  if (!fileId) { // there is no file yet
+    return createFile();
+  }
+  
+  file = DriveApp.getFileById(fileId);
+  if (file.isTrashed()) { // someone moved file to trash
+    file.setTrashed(false);
+  }
+  
+  return DocumentApp.openById(fileId);
+}
+
+var writeFile = function(lectures, doc) {
   
   // page width: 595 pts
   // 35 + [75 + 325 + 125] + 35
@@ -24,9 +59,9 @@ var createFile = function(lectures) {
     col3: 125,
     mr: 35
   };
-  var doc = DocumentApp.create(config.fileName);
   
   var body = doc.getBody();
+  body.clear();
   body.setMarginLeft(widthSplit.ml);
   body.setMarginRight(widthSplit.mr);
   
@@ -101,22 +136,4 @@ var createFile = function(lectures) {
     parCongregation.setAttributes(styleCongregation);
   }
   doc.saveAndClose();
-  return doc.getId();
-}
-
-var moveFile = function(actualFileId) {
-  
-  var oldFileId = scriptProperties.getProperty('OLD_FILE_ID') || null;  
-  var destFolder = DriveApp.getFoldersByName(config.driveTargetFolder).next();
-  var sourceFolder = DriveApp.getRootFolder();
-  if (oldFileId) {
-    try {
-      var lastFile = DriveApp.getFileById(oldFileId);
-      destFolder.removeFile(lastFile);
-    } catch (e) { }
-  }
-  var actualFile = DriveApp.getFileById(actualFileId);
-  destFolder.addFile(actualFile);
-  sourceFolder.removeFile(actualFile);
-  scriptProperties.setProperty('OLD_FILE_ID', actualFileId);
 }
